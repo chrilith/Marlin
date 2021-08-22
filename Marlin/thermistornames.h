@@ -63,6 +63,8 @@
   #define THERMISTOR_NAME "Hisens"
 #elif THERMISTOR_ID == 15
   #define THERMISTOR_NAME "Hisens +"
+#elif THERMISTOR_ID == 16
+  #define THERMISTOR_NAME "ATC 104GT-2 (DAGOMA)"
 #elif THERMISTOR_ID == 20
   #define THERMISTOR_NAME "PT100 UltiMB"
 #elif THERMISTOR_ID == 60
