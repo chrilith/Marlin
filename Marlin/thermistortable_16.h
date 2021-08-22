@@ -20,7 +20,7 @@
  *
  */
 
-// 100K thermistor - Alternative ATC Semitec 104GT-2 (4.7k pullup) DAGOMA version (measured/tested/approved)
+// 100k thermistor - Alternative ATC Semitec 104GT-2 (4.7k pullup) DAGOMA version (measured/tested/approved)
 const short temptable_16[][2] PROGMEM = {
   { OV(   5),  320 },
   { OV(   6),  310 },
