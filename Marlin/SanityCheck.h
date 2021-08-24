@@ -1120,6 +1120,10 @@ static_assert(X_MAX_LENGTH >= X_BED_SIZE && Y_MAX_LENGTH >= Y_BED_SIZE,
   #endif
 #endif
 
+#if defined (IS_MONO_FAN) && FAN_COUNT != 1
+    #error "You cannot set IS_MONO_FAN with FAN_COUNT != 1."
+#endif
+
 /**
  * Test Heater, Temp Sensor, and Extruder Pins; Sensor Type must also be set.
  */

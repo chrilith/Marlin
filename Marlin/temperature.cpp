@@ -206,7 +206,7 @@ int16_t Temperature::minttemp_raw[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_RAW_LO_TE
   int8_t Temperature::meas_shift_index;  // Index of a delayed sample in buffer
 #endif
 
-#if HAS_AUTO_FAN
+#if HAS_AUTO_FAN || defined(IS_MONO_FAN)
   millis_t Temperature::next_auto_fan_check_ms = 0;
 #endif
 
@@ -288,7 +288,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
       bool heated = false;
     #endif
 
-    #if HAS_AUTO_FAN
+    #if HAS_AUTO_FAN || defined(IS_MONO_FAN)
       next_auto_fan_check_ms = next_temp_ms + 2500UL;
     #endif
 
@@ -334,9 +334,16 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
         NOLESS(max, current);
         NOMORE(min, current);
 
-        #if HAS_AUTO_FAN
+        #if HAS_AUTO_FAN || defined(IS_MONO_FAN)
           if (ELAPSED(ms, next_auto_fan_check_ms)) {
-            check_extruder_auto_fans();
+            #if HAS_AUTO_FAN
+              check_extruder_auto_fans();
+            #endif
+            #ifdef IS_MONO_FAN
+              digitalWrite(FAN_PIN, MONO_FAN_MIN_PWM);
+              analogWrite(FAN_PIN, MONO_FAN_MIN_PWM);            
+            #endif
+            
             next_auto_fan_check_ms = ms + 2500UL;
           }
         #endif
