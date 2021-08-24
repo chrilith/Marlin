@@ -538,6 +538,13 @@ static_assert(X_MAX_LENGTH >= X_BED_SIZE && Y_MAX_LENGTH >= Y_BED_SIZE,
 #endif
 
 /**
+ * Manual Z offset calibration requirements
+ */
+#if ENABLED(Z_OFFSET_MENU) && !(HAS_BED_PROBE && ENABLED(ULTIPANEL))
+    #error "Z_OFFSET_MENU requires a probe and LCD Controller."
+#endif
+
+/**
  * Options only for EXTRUDERS > 1
  */
 #if EXTRUDERS > 1
