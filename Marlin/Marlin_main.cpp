@@ -541,6 +541,10 @@ millis_t previous_move_ms; // = 0;
 static millis_t max_inactive_time; // = 0;
 static millis_t stepper_inactive_time = (DEFAULT_STEPPER_DEACTIVE_TIME) * 1000UL;
 
+#ifdef IS_MONO_FAN
+static millis_t next_fan_auto_regulation_check = 0;
+#endif
+
 // Buzzer - I2C on the LCD or a BEEPER_PIN
 #if ENABLED(LCD_USE_I2C_BUZZER)
   #define BUZZ(d,f) lcd_buzz(d, f)
@@ -15004,6 +15008,21 @@ void manage_inactivity(const bool ignore_stepper_queue/*=false*/) {
         homeDebounceCount++;
       else
         homeDebounceCount = 0;
+    }
+  #endif
+
+  #ifdef IS_MONO_FAN
+    if ( ELAPSED(ms, next_fan_auto_regulation_check) ) {
+      float max_temp = 0.0;
+      for (int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder)
+        max_temp = max(max_temp, thermalManager.degHotend(cur_extruder));
+
+      if ( max_temp < MONO_FAN_MIN_TEMP ) {
+        fanSpeeds[0] = 0;
+      } else {
+        NOLESS(fanSpeeds[0], MONO_FAN_MIN_PWM);
+      }
+      next_fan_auto_regulation_check = ms + 2500UL;
     }
   #endif
 

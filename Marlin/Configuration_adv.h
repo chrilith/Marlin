@@ -258,6 +258,15 @@
 #define FANMUX2_PIN -1
 
 /**
+ * Special mono fan handling (mainly for DGOMA printers)
+ */
+//#define IS_MONO_FAN
+#ifdef IS_MONO_FAN
+  #define MONO_FAN_MIN_TEMP 50.0
+  #define MONO_FAN_MIN_PWM  130
+#endif
+
+/**
  * M355 Case Light on-off / brightness
  */
 //#define CASE_LIGHT_ENABLE

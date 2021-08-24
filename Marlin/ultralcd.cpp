@@ -1475,7 +1475,7 @@ void lcd_quick_feedback(const bool clear_buttons) {
     //
     // Fan Speed:
     //
-    #if FAN_COUNT > 0
+    #if FAN_COUNT > 0 && !defined(IS_MONO_FAN)
       #if HAS_FAN0
         MENU_MULTIPLIER_ITEM_EDIT(int3, MSG_FAN_SPEED FAN_SPEED_1_SUFFIX, &fanSpeeds[0], 0, 255);
         #if ENABLED(EXTRA_FAN_SPEED)
