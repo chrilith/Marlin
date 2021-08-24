@@ -46,6 +46,9 @@
 #ifndef MSG_BACK
   #define MSG_BACK                            _UxGT("Back")
 #endif
+#ifndef MSG_DONE
+  #define MSG_DONE                            _UxGT("Done")
+#endif
 #ifndef MSG_SD_INSERTED
   #define MSG_SD_INSERTED                     _UxGT("Card inserted")
 #endif
@@ -701,6 +704,36 @@
 #endif
 #ifndef MSG_STOPPED
   #define MSG_STOPPED                         _UxGT("STOPPED. ")
+#endif
+#ifndef MSG_Z_OFFSET
+  #define MSG_Z_OFFSET                        _UxGT("Adjust Z Offset")
+#endif
+#ifndef MSG_Z_OFFSET_REINIT
+  #define MSG_Z_OFFSET_REINIT                 _UxGT("Reset")
+#endif
+#ifndef MSG_Z_OFFSET_PARAMS
+  #define MSG_Z_OFFSET_PARAMS                 _UxGT("New Z offset")
+#endif
+#ifndef MSG_Z_OFFSET_SAVED
+  #define MSG_Z_OFFSET_SAVED                  _UxGT("saved")
+#endif
+#ifndef MSG_Z_OFFSET_PINCH
+  #define MSG_Z_OFFSET_PINCH                  _UxGT("Pinch a paper sheet")
+#endif
+#ifndef MSG_Z_OFFSET_SETTING
+  #define MSG_Z_OFFSET_SETTING                _UxGT("setting the Z offset")
+#endif
+#ifndef MSG_Z_OFFSET_VALIDATE
+  #define MSG_Z_OFFSET_VALIDATE               _UxGT("Then validate")
+#endif
+#ifndef MSG_Z_OFFSET_ADD_SHEET
+  #define MSG_Z_OFFSET_ADD_SHEET              _UxGT("Slip a paper sheet")
+#endif
+#ifndef MSG_Z_OFFSET_BESIDE_NOZZLE
+  #define MSG_Z_OFFSET_BESIDE_NOZZLE          _UxGT("under the nozzle")
+#endif
+#ifndef MSG_Z_OFFSET_THEN_OK
+  #define MSG_Z_OFFSET_THEN_OK                _UxGT("Then press " MSG_OK)
 #endif
 #ifndef MSG_CONTROL_RETRACT
   #define MSG_CONTROL_RETRACT                 _UxGT("Retract mm")

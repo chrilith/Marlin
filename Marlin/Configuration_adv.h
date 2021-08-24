@@ -815,6 +815,14 @@
   //#define BABYSTEP_ZPROBE_GFX_OVERLAY // Enable graphical overlay on Z-offset editor
 #endif
 
+/**
+ * Z Offset menu enables to manually set the offset from the nozzle to the bed.
+ */
+#define Z_OFFSET_MENU
+#if ENABLED(Z_OFFSET_MENU)
+  #define Z_OFFSET_RESET_START_VALUE (-4.0f)
+#endif
+
 // @section extruder
 
 /**

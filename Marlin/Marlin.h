@@ -91,6 +91,10 @@ extern const char axis_codes[XYZE];
   #define disable_Z() NOOP
 #endif
 
+#if ENABLED(Z_OFFSET_MENU)
+void wait_all_commands();
+#endif
+
 #if ENABLED(MIXING_EXTRUDER)
 
   /**
