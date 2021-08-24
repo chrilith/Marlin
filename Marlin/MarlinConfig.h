@@ -35,6 +35,10 @@
   #define HardwareSerial_h // trick to disable the standard HWserial
 #endif
 
+#ifndef AUTOSTART_NAME
+  #define AUTOSTART_NAME "auto"
+#endif
+
 #include "types.h"
 #include "HAL.h"
 #include "pins.h"
