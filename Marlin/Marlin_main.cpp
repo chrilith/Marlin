@@ -4016,6 +4016,31 @@ inline void gcode_G4() {
 
 #endif
 
+#if ENABLED(Z_OFFSET_MENU)
+  /**
+   * Test for all enqueued commands to be processed.
+   * return false if there are remaining commands, true when all commands are done
+   */
+  static bool _handle_enqueued_commands() {
+    if (commands_in_queue > 0) {
+      process_next_command();
+      cmd_queue_index_r = (cmd_queue_index_r + 1) % BUFSIZE;
+      --commands_in_queue;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Wait for all enqueued commands to be processed.
+   */
+  void wait_all_commands() {
+    while (_handle_enqueued_commands()) {
+      idle();
+    }
+  }
+#endif
+
 #if ENABLED(INCH_MODE_SUPPORT)
   /**
    * G20: Set input mode to inches

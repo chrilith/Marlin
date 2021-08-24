@@ -179,6 +179,10 @@ uint16_t max_display_update_time = 0;
   void lcd_control_temperature_menu();
   void lcd_control_motion_menu();
 
+  #if ENABLED(Z_OFFSET_MENU)
+    static void lcd_adjust_z_offset();
+  #endif
+
   #if DISABLED(SLIM_LCD_MENUS)
     void lcd_control_temperature_preheat_material1_settings_menu();
     void lcd_control_temperature_preheat_material2_settings_menu();
@@ -2701,6 +2705,13 @@ void lcd_quick_feedback(const bool clear_buttons) {
         MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
 
     //
+    // Manual Z Calibration
+    //
+    #if ENABLED(Z_OFFSET_MENU)
+      MENU_ITEM(submenu, MSG_Z_OFFSET, lcd_adjust_z_offset);
+    #endif
+
+    //
     // Auto Home
     //
     MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
@@ -2841,6 +2852,126 @@ void lcd_quick_feedback(const bool clear_buttons) {
   }
 
   float move_menu_scale;
+
+#if ENABLED(Z_OFFSET_MENU)
+
+  inline void line_to_current(AxisEnum axis) {
+    planner.buffer_segment(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], MMM_TO_MMS(manual_feedrate_mm_m[axis]), active_extruder);
+  }
+
+  inline void lcd_adjust_z_offset_set() {
+    enqueue_and_echo_commands_P(PSTR("M84"));   // Disable motors to ensure Z_SAFE_HOMING
+    enqueue_and_echo_commands_P(PSTR("G28"));
+    enqueue_and_echo_commands_P(PSTR("G0 Z0")); // Needed in order for new Z to be taken into account
+  }
+
+  static void _lcd_move_callback_with_offset(const char* name, AxisEnum axis, float min, float max, screenFunc_t callback, float offset) {
+    ENCODER_DIRECTION_NORMAL();
+    if (encoderPosition && planner.movesplanned() <= 3) {
+      reset_stepper_timeout();
+      current_position[axis] += float((int32_t)encoderPosition) * move_menu_scale;
+      #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
+        NOLESS(current_position[axis], min);
+      #endif
+      #if ENABLED(MAX_SOFTWARE_ENDSTOPS)
+        NOMORE(current_position[axis], max);
+      #endif
+      line_to_current(axis);
+      lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
+    }
+    encoderPosition = 0;
+    if (lcdDrawUpdate) lcd_implementation_drawedit(name, ftostr52sign(current_position[axis] + offset));
+    if (lcd_clicked) (*callback)();
+  }
+  
+  static void _lcd_reset_z_offset_saved() {
+    START_MENU();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+
+    lcd_implementation_drawmenu_generic(0, 1, PSTR(MSG_Z_OFFSET_PARAMS), ' ', ' ');
+    lcd_implementation_drawmenu_generic(0, 2, PSTR(MSG_Z_OFFSET_SAVED), ' ', ' ');
+
+    encoderLine = 4;
+
+    MENU_ITEM(submenu, MSG_DONE, lcd_return_to_status);
+    END_MENU();
+  }
+  
+  static void _lcd_reset_z_offset_wait() {
+    START_MENU();
+  
+    lcd_implementation_drawmenu_generic(0, 2, PSTR(MSG_WAIT), ' ', ' ');
+  
+    END_MENU();
+  }
+  
+  static void _lcd_reset_z_offset_done() {
+    lcd_goto_screen(_lcd_reset_z_offset_wait);
+  
+    zprobe_zoffset = Z_OFFSET_RESET_START_VALUE + current_position[Z_AXIS];
+
+    lcd_adjust_z_offset_set();
+    wait_all_commands();
+  
+    defer_return_to_status = false;
+    lcd_goto_screen(_lcd_reset_z_offset_saved);
+  }
+  
+  static void _lcd_reset_z_offset_step2() {
+  
+    lcd_implementation_drawmenu_generic(0, 0, PSTR(MSG_Z_OFFSET_PINCH), ' ', ' ');
+    lcd_implementation_drawmenu_generic(0, 1, PSTR(MSG_Z_OFFSET_SETTING), ' ', ' ');
+  
+    move_menu_scale = 0.05;
+    _lcd_move_callback_with_offset(PSTR(MSG_MOVE_Z), Z_AXIS, soft_endstop_min[Z_AXIS], soft_endstop_max[Z_AXIS], _lcd_reset_z_offset_done, Z_OFFSET_RESET_START_VALUE);
+  
+    lcd_implementation_drawmenu_generic(0, 4, PSTR(MSG_Z_OFFSET_VALIDATE), ' ', ' ');
+  }
+
+  static void _lcd_reset_z_offset_step1() {
+    START_MENU();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+    MENU_ITEM_DUMMY();
+  
+    lcd_implementation_drawmenu_generic(0, 0, PSTR(MSG_Z_OFFSET_ADD_SHEET), ' ', ' ');
+    lcd_implementation_drawmenu_generic(0, 1, PSTR(MSG_Z_OFFSET_BESIDE_NOZZLE), ' ', ' ');
+    lcd_implementation_drawmenu_generic(0, 2, PSTR(MSG_Z_OFFSET_THEN_OK), ' ', ' ');
+
+    encoderLine = 4;
+
+    MENU_ITEM(submenu, MSG_OK, _lcd_reset_z_offset_step2);
+    END_MENU();
+  }
+  
+  // If bad offset, check that BED_CENTER_AT_0_0 isn't defined in the configuration
+  
+  static void lcd_reset_z_offset() {
+    lcd_goto_screen(_lcd_reset_z_offset_wait);
+
+    defer_return_to_status = true;
+
+    zprobe_zoffset = Z_OFFSET_RESET_START_VALUE;
+    enqueue_and_echo_commands_P(PSTR("M84"));   // Disable motors to ensure Z_SAFE_HOMING
+    enqueue_and_echo_commands_P(PSTR("G28"));
+    wait_all_commands();
+  
+    lcd_goto_screen(_lcd_reset_z_offset_step1);
+  }
+    
+  static void lcd_adjust_z_offset() {
+    START_MENU();
+    MENU_BACK(MSG_PREPARE);
+    MENU_ITEM(function, MSG_Z_OFFSET_REINIT, lcd_reset_z_offset);  
+    MENU_ITEM_EDIT_CALLBACK(float52sign, MSG_ZPROBE_ZOFFSET, &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX, lcd_adjust_z_offset_set);
+    END_MENU();
+  }
+
+  #endif
 
   #if ENABLED(DELTA_CALIBRATION_MENU) || ENABLED(DELTA_AUTO_CALIBRATION)
 

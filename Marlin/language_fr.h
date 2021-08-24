@@ -30,11 +30,17 @@
 #ifndef LANGUAGE_FR_H
 #define LANGUAGE_FR_H
 
+#undef MSG_OK
+#undef MSG_WAIT
+
 #define MAPPER_NON
 #define NOT_EXTENDED_ISO10646_1_5X7
 
 #define WELCOME_MSG                         MACHINE_NAME _UxGT(" prete.")
 #define MSG_BACK                            _UxGT("Retour")
+#define MSG_OK                              _UxGT("OK")
+#define MSG_WAIT                            _UxGT("Patientez...")
+#define MSG_DONE                            _UxGT("Termine")
 #define MSG_SD_INSERTED                     _UxGT("Carte inseree")
 #define MSG_SD_REMOVED                      _UxGT("Carte retiree")
 #define MSG_LCD_ENDSTOPS                    _UxGT("Butees") // Max length 8 characters
@@ -258,6 +264,16 @@
 #define MSG_NO_MOVE                         _UxGT("Moteurs bloques.")
 #define MSG_KILLED                          _UxGT("MORT.")
 #define MSG_STOPPED                         _UxGT("STOPPE.")
+#define MSG_Z_OFFSET                        _UxGT("Regl. decalage Z")
+#define MSG_Z_OFFSET_REINIT                 _UxGT("Reinitialiser")
+#define MSG_Z_OFFSET_PARAMS                 _UxGT("Nouveau decalage Z")
+#define MSG_Z_OFFSET_SAVED                  _UxGT("enregistre")
+#define MSG_Z_OFFSET_PINCH                  _UxGT("Pincez la feuille")
+#define MSG_Z_OFFSET_SETTING                _UxGT("en reglant l'offset")
+#define MSG_Z_OFFSET_VALIDATE               _UxGT("puis validez")
+#define MSG_Z_OFFSET_ADD_SHEET              _UxGT("Glissez une feuille")
+#define MSG_Z_OFFSET_BESIDE_NOZZLE          _UxGT("en dessous de la buse")
+#define MSG_Z_OFFSET_THEN_OK                _UxGT("puis appuyez sur " MSG_OK)
 #define MSG_CONTROL_RETRACT                 _UxGT("Retrait mm")
 #define MSG_CONTROL_RETRACT_SWAP            _UxGT("Ech. Retr. mm")
 #define MSG_CONTROL_RETRACTF                _UxGT("Retrait V")
