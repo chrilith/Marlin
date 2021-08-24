@@ -643,6 +643,7 @@
 
   // Add an option in the menu to run all auto#.g files
   //#define MENU_ADDAUTOSTART
+  //#define AUTOSTART_NAME "auto"
 
   /**
    * Continue after Power-Loss (Creality3D)
