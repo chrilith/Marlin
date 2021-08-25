@@ -31,3 +31,20 @@ In order to upload the firmware to the Dagoma board without error using the IDE,
 - Open C:\Users\%%USERNAME%%\AppData\Local\Arduino15\packages\Sanguino\hardware\avr\1.0.3\borads.txt
 - Search for "sanguino.menu.cpu.atmega1284p=ATmega1284 or ATmega1284P (16 MHz)"
 - From here change sanguino.menu.cpu.atmega1284p.upload.speed=115200 to 57600
+
+### Optimizing Binary
+
+You can optimize the compiled binary and save some kilobytes modifiying the compilation options.
+
+In your Arduino IDE installation folder, go to `\hardware\arduino\avr` and add a new file called `platform.local.txt`
+with the following content:
+
+```
+compiler.c.extra_flags=-fno-tree-scev-cprop -fno-split-wide-types -Wl,--relax -mcall-prologues -finline-limit=3
+compiler.cpp.extra_flags=-fno-tree-scev-cprop -fno-split-wide-types -Wl,--relax -mcall-prologues -finline-limit=3
+compiler.c.elf.extra_flags=-Wl,--relax
+```
+
+You can also add `-ffast-math` to save around 1.2k more.
+
+Source: https://thborges.github.io/blog/marlin/2019/01/07/reducing-marlin-binary-size.html
