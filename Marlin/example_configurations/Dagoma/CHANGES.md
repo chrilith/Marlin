@@ -3,7 +3,8 @@
 - Added Dagoma custom bootscreens
 - Added Dagoma Discovery 200 stock configuration
 - Added Dagoma Discovery 200 configuration with LCD and heated bed
-
+- Added Dagoma custom status screen
+- Enabled utf-8 (fr) font
 
 ## 20210824
 
